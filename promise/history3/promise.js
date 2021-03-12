@@ -7,7 +7,7 @@ const REJECTED = 'REJECTED';// 失败态
 // 如果x是一个普通值，则让promise2变成成功态
 // 如果这个x是一个promise的话，那么让这个promise执行，并且采用它的状态来当做promise2的结果
 const resolvePromise = (promise2, x, resolve, reject) => {
-    // 判断 可能你的promise要和别人的promise来混用 文档要求这里需要考虑别人的promise方法
+    // 判断 可能你的promise要和别人的promise来混用
     // 可能不同的promise库之间要相互调用
     if (promise2 === x) {
         // 如果当前then里onFulfilled的返回值x和我们要拿到的当前then的返回值promise2是同一个人（引用），就不需要等待了，因为x永远不能成功或者失败（不能自己等待自己成功或者失败），所以就卡死了
@@ -58,10 +58,6 @@ class Promise {
         this.onRejectedCallbacks = [];
         // 只有状态是等待态的时候，才可以更新状态
         let resolve = (value) => {
-            // 如果当前resolve的value是一个promise的话，需要将这个promise执行，取出来它的value给resolve使用
-            if (value instanceof Promise) {// 递归直到解析出一个普通值来； value这个值，不用考虑别人的promise，因为文档没要求这里要考虑别人的promise方法，所以在这不能和别人的Promise混用
-                return value.then(resolve, reject);
-            }
             if (this.status === PENDING) {
                 this.status = FULFILLED;
                 this.value = value;
@@ -145,14 +141,8 @@ class Promise {
 
         return promise2;
     }
-
-    // catch就是一个没有成功的回调 是then(null, err => { todo ... })的语法糖
-    catch(errCallback) {
-        return this.then(null, errCallback);
-    }
 }
 
-// 静态方法（类上的方法） 
 Promise.deferred = function () {
     let dfd = {};
     dfd.promise = new Promise((resolve, reject) => {
@@ -171,9 +161,5 @@ module.exports = Promise;
  * 
  * 面试2：Promise里链式调用如何实现的？
  * 每一个then返回的都是一个新的promise2
- * 
- * 面试3：让你产生一个延迟对象，你会怎么做？
- * Promise.deferred这个方法是产生一个延迟对象。
- * 注意原生的Promise库里，并没有Promise.deferred这么一个属性，是我们自己扩展的，这样扩展可以产生一个延迟对象，以前会这么用，现在不这么用了，都是直接new Promise()。
  * 
  */
