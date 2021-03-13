@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="button">点击</button>
+</body>
+<!-- script 是一个宏任务 -->
+<script>
+    button.addEventListener('click', () => {
+        console.log('listener1');
+        Promise.resolve().then(() => console.log('micro task1'));
+    });
+    button.addEventListener('click', () => {
+        console.log('listener2');
+        Promise.resolve().then(() => console.log('micro task2'));
+    });
+
+    // 打印顺序：
+    // listener1
+    // micro task1
+    // listener2
+    // micro task2
+    
+    /**
+     * 每次的eventloop只取一个宏任务来执行 
+     * 一个个的函数来取 每次执行完 会先处理当前定义的微任务
+     * 
+    */
+
+    
+     
+    //button.click();// 如果打开这行代码，这个就不是点的时候触发了，而是代码在<script>宏任务执行的时候，就直接触发了click的回调函数
+    // 打印顺序：
+    // listener1
+    // listener2
+    // micro task1
+    // micro task2
+
+    /**
+     * 如果加上 button.click() 这行代码：
+     * 这个就不是点的时候触发了，而是代码在<script>宏任务执行的时候，就直接触发了click的回调函数，相当于两个回调函数立即执行了
+     * 有两个回调函数，因此按照代码执行栈的顺序，先打印listener1，再打印listener2，然后再执行它俩里面的微任务，因此接着打印了micro task1和micro task2
+     * 
+     */
+</script>
+</html>

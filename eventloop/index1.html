@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<!-- script 是一个宏任务 -->
+<script>
+    document.body.style.background = 'red';
+    // 在setTimeout回调执行前 会触发一次渲染
+    setTimeout(() => {// 定时器是宏任务（但是每次的eventloop只会取一个宏任务执行，因为<script>是宏任务，所以定时器并不会在刚打开页面时，第一次的eventloop里被执行，而是第二次的eventloop里被执行，所以能看到页面会闪烁一下，由红色变为绿色）
+        document.body.style.background = 'green';
+    }, 0);
+</script>
+</html>
