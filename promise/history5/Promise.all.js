@@ -2,15 +2,15 @@
 // Promise.all 方法表示等待所有的promise全部成功后，才会执行回调，如果有一个promise失败就失败了
 
 let fs = require('fs').promises;
-// let Promise = require('./promise');
+let Promise = require('./promise');
 // Promise.all返回的是一个promise，能then
 
-// function isPromise(value) {
-//     if (typeof value === 'object' && value !== null || typeof value === 'function') {
-//         return typeof value.then === 'function';
-//     }
-//     return false;
-// }
+function isPromise(value) {
+    if (typeof value === 'object' && value !== null || typeof value === 'function') {
+        return typeof value.then === 'function';
+    }
+    return false;
+}
 
 // 静态方法（类上的方法）
 Promise.all = function(promises) {
@@ -38,11 +38,11 @@ Promise.all = function(promises) {
     });
 }
 
-// Promise.all([1,2,3, fs.readFile('name.txt', 'utf8'), fs.readFile('age.txt', 'utf8')]).then(values => {
-//     console.log(values);
-// }, err => {
-//     console.log(err);
-// });
+Promise.all([1,2,3, fs.readFile('name.txt', 'utf8'), fs.readFile('age.txt', 'utf8')]).then(values => {
+    console.log(values);
+}, err => {
+    console.log(err);
+});
 
 // Promise.race 赛跑 谁是第一个完成的 就用它的结果，如果是失败的，则这个promise就是失败态，如果第一个是成功，则这个promise就是成功太
 // 就看谁先完成，promise的状态就是先完成的那个promise的状态
