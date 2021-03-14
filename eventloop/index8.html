@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a id="link" href="http://www.zhufengpeixun.cn">link</a>
+    <script>
+        let link = document.getElementById('link');
+        
+        // 当我触发点击是 会先去执行click事件 再去执行href跳转
+        link.addEventListener('click', (e) => {
+            // 会等待微任务执行完毕后 再跳转 但是微任务里阻止了默认行为 所以最终没有发生跳转
+            // Promise.resolve().then(() => {
+            //     e.preventDefault();
+            // });
+            // 不会等待宏任务执行，而是在eventloop到达宏任务执行阶段的时候，再将回调函数从宏任务中取出来执行，所以这里不会阻止默认行为，会发生跳转
+            setTimeout(() => {
+                e.preventDefault();
+            }, 0);
+        });
+        
+    </script>
+</body>
+</html>

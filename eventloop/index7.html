@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <a id="link" href="http://www.zhufengpeixun.cn">link</a>
+    <script>
+        let link = document.getElementById('link');
+        const nextTick = new Promise(resolve => {
+            link.addEventListener('click', resolve);
+        });
+        // 第一次点击不跳转页面，后面再次点击就会跳转页面。因为第一次点击之后，promise已经成功了，如果再次点击，就不会再then了
+        nextTick.then(event => {// <script>宏任务第一次执行完之后，then并不会执行，因为promise还没有出发resolve方法，而是等到用户点击按钮的时候，才会触发then方法，进而走到这个回调里来，因此并不会跳转页面
+            event.preventDefault();
+            console.log('event.preventDefault()');
+        });
+
+        // 如果把代码注释放开，刷新页面，页面会立马跳转。
+        // link.click();// 会立即调用resolve
+
+    </script>
+</body>
+</html>
