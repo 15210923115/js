@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // 从上到下执行
+    console.log(1);
+    async function async() {
+        console.log(2);
+        await console.log(3);// 相当于 Promise.resolve(console.log(3)).then(() => {console.log(4)}); 说明了await的下一行代码是在微任务里执行的
+        console.log(4);
+    }
+    setTimeout(() => {
+        console.log(5);
+    }, 0);
+    const promise = new Promise((resolve, reject) => {// new Promise，executor会立即执行
+        console.log(6); 
+        resolve(7);
+    });
+    promise.then(res => {// 这是微任务
+        console.log(res);
+    });
+    async();
+    console.log(8);
+
+    // 打印顺序
+    // 1
+    // 6
+    // 2
+    // 3
+    // 8
+    // 7
+    // 4
+    // 5
+
+    // async + await 就是generator的语法糖，generator内部引用的是Promise
+    // promise.then()是一个微任务
+</script>
+</html>
