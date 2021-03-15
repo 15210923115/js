@@ -39,7 +39,7 @@ console.log('script end');// 5
  * promise2 // 差异2
  * setTimeout
  * 
- * 2.node环境（情况1，有的node版本是这个执行结果）
+ * 2.node环境（情况1，有的node版本是这个执行结果，v11.13.0版本是这个结果）
  * script start
  * async1 start
  * async2
@@ -52,7 +52,7 @@ console.log('script end');// 5
  * // 在浏览器中 await后面跟一个promise，那就直接then
  * // node中虽然你放的是一个promise 会再一次包装，node中await后面的结果会被再包装一次
  * 
- * 3.node环境（情况2，有的node版本是这个执行结果）
+ * 3.node环境（情况2，有的node版本是这个执行结果，大部分node版本都是这个结果，跟浏览器保持一致）
  * script start
  * async1 start
  * async2
@@ -70,25 +70,25 @@ console.log('script end');// 5
 
 // 解析方式1
 // 浏览器和部分node版本中，中解析async1函数的方式（await会被解析出一个then来）：
-async function async1() {
-    console.log('async1 start');
-    // 在浏览器中 await后面跟一个promise，因此async1函数里的await那行及之后的代码可以变成如下：
-    async2().then(() => { 
-        console.log('async1 end');
-    });
-}
+// async function async1() {
+//     console.log('async1 start');
+//     // 在浏览器中 await后面跟一个promise，因此async1函数里的await那行及之后的代码可以变成如下：
+//     async2().then(() => { 
+//         console.log('async1 end');
+//     });
+// }
 
 // 解析方式2
 // 有的node版本中，解析async1函数的方式（await会被解析出两个then来）：
-async function async1() {
-    console.log('async1 start');
-    new Promise((resolve, reject) => {
-        // resolve方法有个特点，如果参数是个promise的话，它会等待里面的promise执行完成，再去调用下一个then
-        resolve(async2());// 上一个eventloop被执行，console.log('promise2');这样代码也是在这次的事件环里执行的
-    }).then(() => {
-        console.log('async1 end');// 下一个eventloop被执行
-    });
-}// 相当于 async2().then(resolve).then(() => {console.log('async1 end');})
+// async function async1() {
+//     console.log('async1 start');
+//     new Promise((resolve, reject) => {
+//         // resolve方法有个特点，如果参数是个promise的话，它会等待里面的promise执行完成，再去调用下一个then
+//         resolve(async2());// 上一个eventloop被执行，console.log('promise2');这样代码也是在这次的事件环里执行的
+//     }).then(() => {
+//         console.log('async1 end');// 下一个eventloop被执行
+//     });
+// }// 相当于 async2().then(resolve).then(() => {console.log('async1 end');})
 
 // 对比两种不同的解析方式，按照解析方式2，可以看出来，console.log('async1 end');这行代码是在下一个eventloop里执行的，比console.log('promise2');这行代码，晚一个eventloop执行。
 // 所以先打印promise2，后打印async1 end
