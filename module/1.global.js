@@ -17,8 +17,9 @@ console.log(Object.keys(global));
 // node里面，默认在文件中打印this的问题
 
 console.log(this);// 打印：{} 
-// 为什么在模块里直接打印this，打印的结果是一个空对象呢？
+// 为什么在模块里直接打印this，打印的结果是一个空对象（而不是global）呢？
 // 因为在文件执行的过程中，默认文件会被加一层函数（主要是为了实现node的模块化功能，模块化的好处是多个文件可以相互独立，互不影响）。
+// 查看node源码，可以看到有一个compilerWrapper.call(thisValue, exports, require, module, filename, dirname)方法，第一个参数就是exports，因此包裹函数调用call，将函数内部的this指向改成了exports，而本文件没有写关于exports的代码，所以默认空对象了
 // 为了印证这个函数，可以直接打印arguments参数看看，如下：
 console.log(arguments);
 // 打印结果是：
