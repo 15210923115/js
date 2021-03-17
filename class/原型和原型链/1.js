@@ -46,3 +46,10 @@ let school = new School();
 console.log(school.hasOwnProperty('a'));// true hasOwnProperty不会去找原型，而是去找实例上的属性
 
 console.log('a' in school);// true in 关键字 会判断这个属性是否属于原型 或者 实例上的属性
+
+// 为什么说Function和Object他们两个，即可以充当对象，也可以充当函数？
+function f() {}
+let o = {};
+console.log(f.constructor);// [Function: Function] 一个函数的构造函数是 function Function() {}
+console.log(o.constructor);// [Function: Object] 一个对象的构造函数是function Object() {}
+// 打印结果可以看出，一个函数或者一个对象，都有构造函数，然而函数又是特殊的对象。
