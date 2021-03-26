@@ -29,12 +29,17 @@ console.log(a);// f 2
 
 /**
 
-let 声明的变量为什么在window上访问不到？
+    let 声明的变量为什么在window上访问不到？
 
-ES6的全局作用域下，VO和GO做了分离
-let f = 10;
-VO.f可以访问到
-但是GO.f访问不到了
+    ES6的全局作用域下，VO和GO做了分离
+    let f = 10;
+    VO.f可以访问到
+    但是GO.f访问不到了
+
+    var s = 1;// window.a = global.variableEnvironment.a = 1; var在全局作用域下赋值，相当于给widow上赋值
+    let x = 2;// global.lexicalEnvironment.b = 2，该操作并未在window上进行赋值，所以let声明的变量在window上拿不到
+    console.log(window.s);// 1
+    console.log(window.x);// undefined
 
  */
 

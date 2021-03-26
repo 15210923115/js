@@ -11,6 +11,7 @@ function fn() {
         let b = 3;
         var c = 4;// var和function声明的变量，无视块级作用域。如果此处的代码不是var c = 4;而是c = 4;的话，如果是window环境，变量查找的时候，会给window上声明一个全局变量c，并给c赋值4，这个的前提是c变量不是使用let声明的，也没有使用var，而是直接c = 4;的方式去进行变量查找，在es5里如果通过作用域链一层层往上找，如果没有找到声明变量c的地方，那么就会在window上声明c，这个在es6里也得以保留下来。
         let d = 5;
+        let e = 6;
         console.log(a,b,c,d);// 1 3 4 5
     }
     {// 第二个代码块
@@ -37,7 +38,7 @@ let globalEC = {
     this: globalThis, // 代表当前的this指针
     outer: null, // 外部的执行上下文环境，词法作用域就是静态作用域，就是指作用域是由代码中函数声明的位置来决定的。（相当于实现了以前es5中的scopeChain）
     variableEnvironment: { fn() {} },// 这里面存放的var和function声明的变量，其中变量提升还是存在的
-    lexicalEnvironment: [] // 这里面存放let和const声明的变量，不存在变量提升
+    lexicalEnvironment: [] // 这里面存放let和const声明的变量
 };
 
 // global编译阶段完成后，就开始执行阶段，发现了fn函数，于是开始fn函数的编译阶段，然后再去执行fn
@@ -53,7 +54,7 @@ let globalEC = {
 
 let fnEC = {
     this: globalThis,
-    outer: globalEC.variableEnvironment,// 其实这里的outer更准确的值是globalEC，而不是globalEC.variableEnvironment，因为这里的globalEC.lexicalEnvironment是空的值，且globalEC.this也不会有c，且globalEC.outer是null，所以就直接写成globalEC.variableEnvironment了，要注意！
+    outer: globalEC,// 其实这里的outer更准确的值是globalEC，而不是globalEC.variableEnvironment，因为这里的globalEC.lexicalEnvironment是空的值，且globalEC.this也不会有c，且globalEC.outer是null，所以就直接写成globalEC.variableEnvironment了，要注意！
     variableEnvironment: { a: undefined, c: undefined },// var和function声明的变量，无视块级作用域，于是第一个代码块里声明的变量c就被提升到最上面了
     lexicalEnvironment: [{ b: undefined }]
 };
@@ -91,3 +92,72 @@ fnEC.lexicalEnvironment[1].b = 3;
 fnEC.variableEnvironment.c = 4;
 fnEC.lexicalEnvironment[1].d = 5;
 
+/**
+ * 五、执行console.log(a , b, c, d)
+ */
+
+console.log(getValue('a', fnEC), getValue('b', fnEC), getValue('c', fnEC), getValue('d', fnEC));
+
+function getValue(name, ec) {
+    for (let i = ec.lexicalEnvironment.length - 1; i>=0; i--) {// LE里是栈结构，需要倒序查找（就近原则），从栈顶开始查找。
+        if (name in ec.lexicalEnvironment[i]) {
+            return ec.lexicalEnvironment[i][name]+"*";
+        }
+    }
+    if (name in ec.variableEnvironment) {
+        return ec.variableEnvironment[name]+"*";
+    }
+    if (ec.outer) {// 作用域也是嵌套的，所以要遍历父级的作用域，也就是从去当前EC的outer里去找
+        return getValue(name, ec.outer)+"*";
+    }
+    return null;
+}
+
+/**
+ * 六、第一个代码块执行完毕，需要出栈
+ */
+fnEC.lexicalEnvironment.pop();
+
+/**
+ * 七、编译第二个代码块
+ */
+fnEC.lexicalEnvironment.push({
+    b: undefined,
+    d: undefined
+});
+
+/**
+ * 八、执行第二个代码块
+ */
+fnEC.lexicalEnvironment[1].b = 6;
+fnEC.lexicalEnvironment[1].d = 7;
+
+/**
+ * 九、执行console.log(a, b, c, d)
+ */
+ console.log(getValue('a', fnEC), getValue('b', fnEC), getValue('c', fnEC), getValue('d', fnEC));
+
+// es6里执行上下文之间的连接靠outer
+// es5里执行上下文之间的连接靠scopeChain
+
+var s = 1;// window.a = global.variableEnvironment.a = 1; var在全局作用域下赋值，相当于给widow上赋值
+let x = 2;// global.lexicalEnvironment.b = 2，该操作并未在window上进行赋值，所以let声明的变量在window上拿不到
+console.log(window.s);// 1
+console.log(window.x);// undefined
+
+/**
+ * let 声明的变量为什么在window上访问不到？
+
+    ES6的全局作用域下，VO和GO做了分离
+    let f = 10;
+    VO.f可以访问到
+    但是GO.f访问不到了
+ */
+
+// let在try catch的代码块里的表现结果跟普通的代码块一样，没有区别
+try {
+    let abc = 2;
+} catch (er) {
+    console.log(abc);
+}
+console.log(abc, 'abc');// Uncaught ReferenceError: abc is not defined
