@@ -250,3 +250,9 @@ JS机会阻塞HTML解析，也会阻塞渲染，JS要等上面的css加载并解
 * [理解关键的渲染路径](https://www.w3cplus.com/performance/understanding-the-critical-rendering-path.html)
 * [关键渲染路径](https://github.com/berwin/Blog/issues/29)
 * [初探CSS对象模型（CSSOM）](https://www.w3cplus.com/javascript/cssom-css-typed-om.html)
+
+ok
+
+afs
+
+asdf
