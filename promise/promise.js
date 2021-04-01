@@ -49,6 +49,11 @@ const resolvePromise = (promise2, x, resolve, reject) => {
         resolve(x);
     }
 };
+
+new Promise((resolve, reject) => {
+    resolve(66);
+}).then(onFulfilled, onRejected);
+
 class Promise {
     constructor(executor) {
         this.status = PENDING; // 默认是等待态
