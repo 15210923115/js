@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg); /* css3动画 */
+                /* width: 100px; */ /* 非css3动画 */
+            }
+            to {
+                transform: rotate(360deg);
+                /*  width: 500px; */
+            }
+        }
+        #app {
+            width: 100px;
+            height: 100px;
+            background: red;
+            animation: rotate 2s linear infinite;
+        }
+    </style>
+
+    <div id="app"></div>
+    <div style="will-change: transform;">my</div>
+
+    <!--
+        MacOS: command+shift+p
+        Win: ctrl+shift+p
+
+        show rendering 可以看到重排的效果
+        show layers
+
+    -->
+
+    <!-- css3动画，会单独生成一个图层 
+        有图层，就会进行优化，浏览器就会单独留意它，但是也会产生一些内存消耗。
+
+        如果希望某些元素本省就能独立出来一个图层，就可以在元素上加”will-change: transform;“样式属性，浏览器就知道这个元素后续可能会发生变化
+
+        图层会脱离文档流，单独变化，不会影响其它元素
+    -->
+
+    <!--
+        尽量使用css3动画（css3动画，第一次是布局、绘制、复合图层，以后的就没有布局和绘制了，只有复合涂层的，
+        而非css3动画不是，每次动画都是布局、绘制、复合图层重新来一遍，很消耗性能，浏览器会开启GPU加速）
+    -->
+</body>
+</html>

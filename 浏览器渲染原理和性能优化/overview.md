@@ -138,7 +138,7 @@ Chrome最多允许对同一个 Host 建立六个 TCP 连接。不同的浏览器
 
 先来看一下 Pipelining 是什么，RFC 2616 中规定了：一个支持持久连接的客户端可以在一个连接中发送多个请求（不需要等待任意请求的响应）。收到请求的服务器必须按照请求收到的顺序发送响应。（至于标准为什么这么设定，我们可以大概推测一个原因：由于 HTTP/1.1 是个文本协议，同时返回的内容也并不能区分对应于哪个发送的请求，所以顺序必须维持一致。比如你向服务器发送了两个请求 GET /query?q=A 和 GET /query?q=B，服务器返回了两个结果，浏览器是没有办法根据响应结果来判断响应对应于哪一个请求的。）
 
-Pipelining 这种设想看起来比较美好，但是在实践中会出现许多[问题](https://my.oschina.net/u/4316091/blog/4808508)，例如Head-of-line Blocking 连接头阻塞（队头阻塞）的问题：在建立起一个 TCP 连接之后，假设客户端在这个连接连续向服务器发送了几个请求。按照标准，服务器应该按照收到请求的顺序返回结果，假设服务器在处理首个请求时花费了大量时间，那么后面所有的请求都需要等着首个请求结束才能响应。（大家的请求都在同一时刻发送出去，那么大家的响应回来的时候也是一起回来的，但是回来的时间会受到在服务器上消耗时间最长的那个请求的时间的限制，只有当消耗时间最长的按个请求也处理完了可以响应了，大家的响应才会一起回来）。
+Pipelining 这种设想看起来比较美好，但是在实践中会出现许多[问题](https://my.oschina.net/u/4316091/blog/4808508)，例如Head-of-line Blocking 连接头阻塞（队头阻塞）的问题：在建立起一个 TCP 连接之后，假设客户端在这个连接连续向服务器发送了几个请求。按照标准，服务器应该按照收到请求的顺序返回结果，假设服务器在处理首个请求时花费了大量时间，那么后面所有的请求都需要等着首个请求结束才能响应。
 
 除了队头阻塞问题，还有一些代理服务器不能正确的处理 HTTP Pipelining。由于Pipelining模式的使用是非常有限，只允许GET和HEAD请求，所以现代浏览器默认是不开启 HTTP Pipelining 的，甚至很多语言的HttpClient组件并不支持Pipelining这种方式。
 
@@ -177,7 +177,7 @@ HTTP3.0还存在很多问题，目前还没有大范围使用。
 
 5. 通过渲染树，进行分层（根据定位属性、透明属性、transform属性、clip属性等）生产图层树。（Layout）
 
-6. 将不同图层进行绘制（Painting），转交给合成线程（Compositor）处理。最终生产页面，并显示到浏览器上。（Painting,Display）
+6. 将不同图层进行绘制（Painting），转交给合成线程（Compositor）处理（将多个不同的图层进行复合）。最终生产页面，并显示到浏览器上。（Painting,Display）
 
 > 关键字：解析HTML（构建DOM树）、渲染
 
@@ -244,29 +244,109 @@ JS机会阻塞HTML解析，也会阻塞渲染，JS要等上面的css加载并解
 ---
 ![](./Performance-API.png)
 
-
-
-
-
-
-
-
 ## <font color=#0099ff>六、网络优化策略</font>
 ---
 
+* 减少HTTP请求数，合并JS、CSS，合理内联CSS、JS（没法做缓存，首个html也会非常大）
+* 合理设置服务端缓存，提高服务器处理速度（强制缓存、对比缓存）  
+`Expires/Cache-Control`、`Etag/if-none-match/last-modified/if-modified-since`
+* 避免重定向，重定向会降低响应速度（301、302）
+* 使用dns-prefetch进行DNS解析
+* 采用域名分片技术（HTTP1.1队头阻塞问题：一个域名下最多创建6个TCP连接，且每个TCP连接都有队头阻塞问题），将资源放到不同的域名下。接触同一个域名最多处理6个TCP连接问题。
+* 采用`CDN加速`加快访问速度。（指派最近资源，高度可用）
+* `gzip`压缩优化，对传输资源进行体积压缩（html，js，css，图片不用做gzip，因为图片本身就是被压缩过的文件，如果用gzip压缩的话，可能比压缩之前还要大。还有视频，也不用做gzip，也是压缩过的一中文件）  
+`Content-Encoding: gzip`
+* 加载数据优先级：（1）`preload`（预先请求当前页面需要的资源）。（2）`prefetch`（将来页面中使用的资源），当网页空闲的时候将数据缓存到HTTP缓存中。 （首页的内容都用preload，子页的内容都用prefetch。在vue的SPA项目中，webpack打包的时候可以配置，有个vue插件可直接使用） 
+`<link rel="preload" href="style.css" as="style">`
+
 ## <font color=#0099ff>七、关键渲染路径</font>
 ---
+![](./images/关键渲染路径.png)
+关键渲染路径，意思是非常重要，只要我渲染，就会经过这些路径。
+
+能重绘就不要用重排。最好都不要发生重绘和重排。
+
+在渲染路径里，不是每一步都是必须的，我们可以跳过其中的某些路径（重绘和重排并不一定是必须的）。比如，我要将div的背景色从red改为blue，则会重新走样式计算，跳过重排走重绘，然后再合成（图层）。如果是一个css3动画，那么js执行完以后，该走样式计算了，然后跳过重排和重绘，直接到合成图层的步骤。记住，css3动画，不会走重排和重绘，非css3的动画，会走样式计算->重排->重绘->合成。
+
 ### <font color=#0099ff>1. 强制同步布局问题</font>
+js强制将计算样式和布局操作提前到当前的任务中
+```js
+function reflow() {
+    let el = document.getElementById('app');
+    let node = document.createElement('h1');
+    node.innerHTML = 'hello';
+    el.appendChild(node);
+    // 强制同步布局
+    console.log(app.offsetTop);// 触发重新布局
+}
+window.addEventListener('load', function(){
+    reflow();
+});
+```
 ### <font color=#0099ff>2. 布局抖动（layout thrashing）问题</font>
-### <font color=#0099ff>3. 减少回流和重绘</font>
+```js
+function reflow() {
+    let el = document.getElementById('app');
+    let node = document.createElement('h1');
+    node.innerHTML = 'hello';
+    el.appendChild(node);
+    // 强制同步布局
+    console.log(app.offsetTop);// 不停的触发重新布局
+}
+window.addEventListener('load', function(){
+    for (let i=0; i < 100; i++) {
+        reflow();
+    }
+});
+```
+### <font color=#0099ff>3. 减少回流和重绘</font>  
+* 脱离文档流（脱离文档流，就不会影响其它元素的位置）
+* 渲染时给图片增加固定宽高（累计布局：我有100张图片，没有写宽度和高度，刚开始的时候，浏览器是不知道我这些图片有多大的，等图片加载完之后，每加载完一个，都会去影响其它人的位置，所以给图片增加宽高是非常有必要的）
+* 尽量使用css3动画（css3动画，第一次是布局、绘制、复合图层，以后的就没有布局和绘制了，只有复合涂层的，而非css3动画不是，每次动画都是布局、绘制、复合图层重新来一遍，很消耗性能，浏览器会开启GPU加速）
+* 可以使用will-change提取到单独的图层中
 
 ## <font color=#0099ff>八、静态文件优化</font>
 ---
 ### <font color=#0099ff>1. 图片优化</font>
+#### <font color=#00ffff>图片格式</font>  
+* `jpg`：适合色彩丰富的照片、banner图；不适合图形文字、图标（纹理边缘有锯齿），不支持透明度
+* `png`：适合纯色、透明、图标，支持半透明、全透明；不适合色彩丰富图片，因为无损存储会导致存储体积大
+* `gif`：适合动画、可以动的图标；不支持半透明，但是可以全透明，不适合存储彩色图片
+* `webp`：适合半透明图片，可以保证图片质量和较小的体积（兼容性不好）
+* `svg`：相比于jpg和png它的体积更小，渲染成本过高（svg是一行行的代码，会去执行），适合小且色彩单一的图标
+#### <font color=#00ffff>图片优化</font>  
+* 避免空src的图片（空的src，浏览器也会发送请求的，浪费资源）
+* 减小图片尺寸，节约用户流量
+* img变迁设置alt属性，提升图片加载失败时的用户体验
+* 原生的`loading: lazy`图片懒加载（图片一定要给宽度和高度，不给的话，也会有性能问题，会导致重排），这是原生支持的图片懒加载，只有当图片进入可视区域内，才会去加载，程序员不可控制，因为监控不到什么时候开始懒加载的，所以我们一般用js去实现懒加载。  
+```html
+<img loading="lazy" src="xxx" width="100" height="450" />
+```
+* 不同环境下，加载不同尺寸和像素的图片
+```html
+<img src="xxx" sizes="(max-width:500px) 100px, (max-width:600px) 200px" srcset="./images/1.jpg 100w, ./images/2.jgp 200w"/>
+其中100w和200w指代宽度是100px和200px
+宽度是100px的时候，加载1.jpg，宽度是200px的时候，加载2.jpg
+```
+* 对于较大的图片可以考虑采用渐进式图片（渐进式图片是UI给我们设计的），一张图片一点一点加载，渐进式图片会比正常图片小一点。
+* 采用`base64URL`减少图片请求。有个严重的缺陷是base64后的体积，会比之前大三分之一，因此大图片不会用它，而是小图标可以用它。
+* 采用雪碧图合并图标图片等
 ### <font color=#0099ff>2. HTML优化</font>
+* 语义化HTML：代码简洁清晰，利于搜索引擎，便于团队开发
+* 提前声明字符编码，让浏览器快速确定如何渲染网页内容
+* 减少HTML嵌套关系，减少DOM节点数量
+* 删除多余空格、空行、注释、无用的属性等
+* HTML里减少iframe使用，iframe会阻塞onload事件，可以动态加载iframe
+* 表面使用table布局
+
 ### <font color=#0099ff>3. CSS优化</font>
+
+
 ### <font color=#0099ff>4. JS优化</font>
+
+
 ### <font color=#0099ff>5. 图标优化</font>
+
 ## <font color=#0099ff>九、优化策略</font>
 ---
 ### <font color=#0099ff>1. 浏览器的存储</font>
@@ -282,9 +362,3 @@ JS机会阻塞HTML解析，也会阻塞渲染，JS要等上面的css加载并解
 * [理解关键的渲染路径](https://www.w3cplus.com/performance/understanding-the-critical-rendering-path.html)
 * [关键渲染路径](https://github.com/berwin/Blog/issues/29)
 * [初探CSS对象模型（CSSOM）](https://www.w3cplus.com/javascript/cssom-css-typed-om.html)
-
-ok
-
-afs
-
-asdf

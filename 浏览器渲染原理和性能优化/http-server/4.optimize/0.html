@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script>
+        // JavaScript强制将计算样式和布局操作提前到当前的任务中
+        function reflow() {
+            let el = document.getElementById('app');
+            let node = document.createElement('h1');
+            node.innerHTML = 'hello';
+            el.appendChild(node);
+            // 强制同步布局
+            console.log(app.offsetTop);// 在函数中获取位置就会导致重排（重新布局），只有先去重排，才能获取最新的位置
+        }
+        window.addEventListener('load', function(){
+            reflow();// 只进行一次样式计算+布局
+        });
+
+        // 恶劣的代码：发生了布局抖动（layout thrashing）问题（在一段js代码中，反复执行布局操作，就是布局抖动）
+        // function reflow() {
+        //     let el = document.getElementById('app');
+        //     let node = document.createElement('h1');
+        //     node.innerHTML = 'hello';
+        //     el.appendChild(node);
+        //     // 强制同步布局
+        //     console.log(app.offsetTop);// 不停的触发重新布局
+        // }
+        // window.addEventListener('load', function(){
+        //     // 会在当前函数里，重复执行100次的样式计算+布局
+        //     for (let i=0; i < 100; i++) {
+        //         reflow();
+        //     }
+        // });
+
+        // 不恶劣的代码：
+        // console.log(app.offsetTop);// 不会触发重新布局
+        // function reflow() {
+        //     let el = document.getElementById('app');
+        //     let node = document.createElement('h1');
+        //     node.innerHTML = 'hello';
+        //     el.appendChild(node);
+        // }
+        // window.addEventListener('load', function(){
+        //     for (let i=0; i < 100; i++) {
+        //         reflow();
+        //     }
+        // });
+
+
+    </script>
+</body>
+</html>
