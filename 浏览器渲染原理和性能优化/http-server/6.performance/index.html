@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!--需要等待所有的事件执行完毕后才能计算-->
+    <p elementtiming="af">阿道夫</p>
+    <div style="background: red; width: 100px; height: 100px;"></div>
+    <h1 elementtiming="meaningful">有意义</h1>
+    <script>
+
+        window.addEventListener("DOMContentLoaded", function(){
+            // let s = 0;
+            // for (let i=0; i < 100000000; i++) {
+            //     s+=i;
+            // }
+            // console.log(s);
+            setTimeout(()=>{
+                document.body.appendChild(document.createTextNode('hello'));
+            },1000);
+        });
+
+        setTimeout(()=>{
+            const {
+                fetchStart,// 开始访问
+                requestStart,// 请求的开始
+                responseStart,// 响应的开始
+                responseEnd,// 响应的结束
+                domInteractive,// dom可交互的时间点
+                domContentLoadedEventEnd,// dom加载完毕 + domContentLoaded 
+                loadEventStart // 所有资源加载完毕
+            } = performance.timing;
+
+            let TTFB = requestStart - responseStart;// 首字节返回的时长 服务器的处理能力
+            let TTI = domInteractive - fetchStart;// 整个的“从开始访问服务到可以与页面交互”的时长
+            let DCL = domContentLoadedEventEnd - fetchStart;// DOM整个加载完毕所用的时长
+            let L = loadEventStart - fetchStart;// 所有资源加载完毕所用的时长
+            
+            console.log(TTFB, TTI, DCL, L);// 0 13 134 134
+            // DCL - TTI 的时间差就是DOMContentLoaded函数执行的时间
+            
+            let paint = performance.getEntriesByType('paint');// 所有跟绘制相关的信息
+            console.log(paint[0].startTime);// FP 只是画了像素而已（空div算）第一个像素点绘制到屏幕的时间
+            console.log(paint[1].startTime);// FCP 有内容才行（空div不算，里面没有内容就不算）首次绘制任何文本、图像、非空白节点的时间
+            
+
+        },3000);
+
+        // FMP：First Meaningful Paint（首次有意义的绘制） 首次有意义的绘制是页面可用性的度量标准
+        new PerformanceObserver((entryList, observe)=>{
+            // console.log(entryList.getEntries()[0]);
+            const FMP =  entryList.getEntries()[0].startTime;
+            console.log("FMP:", FMP);
+            observe.disconnect();// 监控完后直接结束
+        }).observe({entryTypes: ['element']});// 创建一个可以观测的performance运行的
+
+        // LCP：Largest Contentful Paint （最大内容渲染） 在viewport中最大的页面元素绘制的时间
+        new PerformanceObserver((entryList, observe)=>{
+            // console.log(entryList.getEntries()[entryList.getEntries().length-1]);
+            const LCP =  entryList.getEntries()[entryList.getEntries().length-1].startTime;
+            console.log("LCP:", LCP);
+            observe.disconnect();// 监控完后直接结束
+        }).observe({entryTypes: ['largest-contentful-paint']});// 创建一个可以观测的performance运行的
+
+        // FID：First Input Delay （首次输入延迟） 用户首次和页面交互（单击链接、点击按钮、点击页面等等）等到页面响应交互的时间
+        new PerformanceObserver((entryList, observe)=>{
+            let firstInput = entryList.getEntries()[0];
+            if (!firstInput) return;
+            const FID =  firstInput.processingStart - firstInput.startTime;
+            console.log("FID:", FID);
+            observe.disconnect();// 监控完后直接结束
+        }).observe({entryTypes: ['first-input'], buffered: true});// 创建一个可以观测的performance运行的
+    </script>
+</body>
+</html>

@@ -242,6 +242,15 @@ JS机会阻塞HTML解析，也会阻塞渲染，JS要等上面的css加载并解
 ---
 ## <font color=#0099ff>五、Performance API</font>
 ---
+![](./Performance-API.png)
+
+
+
+
+
+
+
+
 ## <font color=#0099ff>六、网络优化策略</font>
 ---
 
