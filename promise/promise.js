@@ -1,3 +1,5 @@
+const { resolve } = require("./selfwrite");
+
 // 宏
 const PENDING = 'PENDING'; // 等待态
 const FULFILLED = 'FULFILLED';// 成功态
@@ -50,10 +52,6 @@ const resolvePromise = (promise2, x, resolve, reject) => {
     }
 };
 
-new Promise((resolve, reject) => {
-    resolve(66);
-}).then(onFulfilled, onRejected);
-
 class Promise {
     constructor(executor) {
         this.status = PENDING; // 默认是等待态
@@ -90,6 +88,7 @@ class Promise {
     // 只要x 是一个普通值 就让下一个promise变成成功态
     // 这个x 有可能是一个promise 我们需要采用这个promise的状态
     then(onFulfilled, onRejected) {// 订阅的过程
+        console.log('thenthen---');
         // 穿透（then方法里，可选参数的处理）
         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : val => val;
         onRejected = typeof onRejected === 'function' ? onRejected : err => {
@@ -167,6 +166,15 @@ Promise.deferred = function () {
     
     return dfd;
 }
+
+
+new Promise((resolve, reject)=>{
+    setTimeout(()=>{
+        resolve('okok');
+    },3000);
+}).then(data=>{
+    console.log(data);
+});
 
 module.exports = Promise;
 
