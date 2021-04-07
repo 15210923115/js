@@ -392,6 +392,8 @@ initObserver();
 </br>   
 动画一般要采用`requestAnimationFrame`去做。浏览器刷新频率默认为60FPS（Frames Per Second），FPS为每秒传输帧数。1s需要刷新60次，那么每次约1000/60=16.7毫秒，即每一帧大约是16.7s。`requestAnimationFrame`可以实现每一帧都可以做我想做的事情。
 
+每一帧里的渲染执行完后，requestIdleCallback发现浏览器有空闲时间，于是在当前这一帧里的剩余时间里，来执行requestIdleCallback里的callback函数（有可能这个callback函数的执行时间超过了当前帧的剩余时间，那么就会占用下一帧的开始时间，等到callback执行完了，下一帧的动画才开始执行。callback里真正执行的是sleep函数，所以sleep要执行多久，则callback就会执行多久，可以尝试修改sleep里的参数为10、100、300、1000试试，看看效果）。这样就能将浏览器的空闲时间充分利用起来了。（例子参见：./http-server/4.optimize/3.requestAnimationFrame.html）
+
 8. 尽量避免使用`eval`，消耗时间久。（eval性能不好）
 9. 使用事件委托，减少事件绑定个数。（绑定的事件个数越多，筛查起来就越慢，如果绑定到父级再分发，性能会高很多）
 10. 尽量使用canvas动画、css动画，少用js动画。
