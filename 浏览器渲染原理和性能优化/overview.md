@@ -247,16 +247,16 @@ JS机会阻塞HTML解析，也会阻塞渲染，JS要等上面的css加载并解
 ## <font color=#0099ff>六、网络优化策略</font>
 ---
 
-* 减少HTTP请求数，合并JS、CSS，合理内联CSS、JS（没法做缓存，首个html也会非常大）
-* 合理设置服务端缓存，提高服务器处理速度（强制缓存、对比缓存）  
+1. 减少HTTP请求数，合并JS、CSS，合理内联CSS、JS（没法做缓存，首个html也会非常大）
+2. 合理设置服务端缓存，提高服务器处理速度（强制缓存、对比缓存）  
 `Expires/Cache-Control`、`Etag/if-none-match/last-modified/if-modified-since`
-* 避免重定向，重定向会降低响应速度（301、302）
-* 使用dns-prefetch进行DNS解析
-* 采用域名分片技术（HTTP1.1队头阻塞问题：一个域名下最多创建6个TCP连接，且每个TCP连接都有队头阻塞问题），将资源放到不同的域名下。接触同一个域名最多处理6个TCP连接问题。
-* 采用`CDN加速`加快访问速度。（指派最近资源，高度可用）
-* `gzip`压缩优化，对传输资源进行体积压缩（html，js，css，图片不用做gzip，因为图片本身就是被压缩过的文件，如果用gzip压缩的话，可能比压缩之前还要大。还有视频，也不用做gzip，也是压缩过的一中文件）  
+3. 避免重定向，重定向会降低响应速度（301、302）
+4. 使用dns-prefetch进行DNS解析
+5. 采用域名分片技术（HTTP1.1队头阻塞问题：一个域名下最多创建6个TCP连接，且每个TCP连接都有队头阻塞问题），将资源放到不同的域名下。接触同一个域名最多处理6个TCP连接问题。
+6. 采用`CDN加速`加快访问速度。（指派最近资源，高度可用）
+7. `gzip`压缩优化，对传输资源进行体积压缩（html，js，css，图片不用做gzip，因为图片本身就是被压缩过的文件，如果用gzip压缩的话，可能比压缩之前还要大。还有视频，也不用做gzip，也是压缩过的一中文件）  
 `Content-Encoding: gzip`
-* 加载数据优先级：（1）`preload`（预先请求当前页面需要的资源）。（2）`prefetch`（将来页面中使用的资源），当网页空闲的时候将数据缓存到HTTP缓存中。 （首页的内容都用preload，子页的内容都用prefetch。在vue的SPA项目中，webpack打包的时候可以配置，有个vue插件可直接使用） 
+8. 加载数据优先级：（1）`preload`（预先请求当前页面需要的资源）。（2）`prefetch`（将来页面中使用的资源），当网页空闲的时候将数据缓存到HTTP缓存中。 （首页的内容都用preload，子页的内容都用prefetch。在vue的SPA项目中，webpack打包的时候可以配置，有个vue插件可直接使用） 
 `<link rel="preload" href="style.css" as="style">`
 
 ## <font color=#0099ff>七、关键渲染路径</font>
@@ -300,58 +300,191 @@ window.addEventListener('load', function(){
 });
 ```
 ### <font color=#0099ff>3. 减少回流和重绘</font>  
-* 脱离文档流（脱离文档流，就不会影响其它元素的位置）
-* 渲染时给图片增加固定宽高（累计布局：我有100张图片，没有写宽度和高度，刚开始的时候，浏览器是不知道我这些图片有多大的，等图片加载完之后，每加载完一个，都会去影响其它人的位置，所以给图片增加宽高是非常有必要的）
-* 尽量使用css3动画（css3动画，第一次是布局、绘制、复合图层，以后的就没有布局和绘制了，只有复合涂层的，而非css3动画不是，每次动画都是布局、绘制、复合图层重新来一遍，很消耗性能，浏览器会开启GPU加速）
-* 可以使用will-change提取到单独的图层中
+1. 脱离文档流（脱离文档流，就不会影响其它元素的位置）
+2. 渲染时给图片增加固定宽高（累计布局：我有100张图片，没有写宽度和高度，刚开始的时候，浏览器是不知道我这些图片有多大的，等图片加载完之后，每加载完一个，都会去影响其它人的位置，所以给图片增加宽高是非常有必要的）
+3. 尽量使用css3动画（css3动画，第一次是布局、绘制、复合图层，以后的就没有布局和绘制了，只有复合涂层的，而非css3动画不是，每次动画都是布局、绘制、复合图层重新来一遍，很消耗性能，浏览器会开启GPU加速）
+4. 可以使用will-change提取到单独的图层中
 
 ## <font color=#0099ff>八、静态文件优化</font>
 ---
 ### <font color=#0099ff>1. 图片优化</font>
 #### <font color=#00ffff>图片格式</font>  
-* `jpg`：适合色彩丰富的照片、banner图；不适合图形文字、图标（纹理边缘有锯齿），不支持透明度
-* `png`：适合纯色、透明、图标，支持半透明、全透明；不适合色彩丰富图片，因为无损存储会导致存储体积大
-* `gif`：适合动画、可以动的图标；不支持半透明，但是可以全透明，不适合存储彩色图片
-* `webp`：适合半透明图片，可以保证图片质量和较小的体积（兼容性不好）
-* `svg`：相比于jpg和png它的体积更小，渲染成本过高（svg是一行行的代码，会去执行），适合小且色彩单一的图标
+1. `jpg`：适合色彩丰富的照片、banner图；不适合图形文字、图标（纹理边缘有锯齿），不支持透明度
+2. `png`：适合纯色、透明、图标，支持半透明、全透明；不适合色彩丰富图片，因为无损存储会导致存储体积大
+3. `gif`：适合动画、可以动的图标；不支持半透明，但是可以全透明，不适合存储彩色图片
+4. `webp`：适合半透明图片，可以保证图片质量和较小的体积（兼容性不好）
+5. `svg`：相比于jpg和png它的体积更小，渲染成本过高（svg是一行行的代码，会去执行），适合小且色彩单一的图标
 #### <font color=#00ffff>图片优化</font>  
-* 避免空src的图片（空的src，浏览器也会发送请求的，浪费资源）
-* 减小图片尺寸，节约用户流量
-* img变迁设置alt属性，提升图片加载失败时的用户体验
-* 原生的`loading: lazy`图片懒加载（图片一定要给宽度和高度，不给的话，也会有性能问题，会导致重排），这是原生支持的图片懒加载，只有当图片进入可视区域内，才会去加载，程序员不可控制，因为监控不到什么时候开始懒加载的，所以我们一般用js去实现懒加载。  
+1. 避免空src的图片（空的src，浏览器也会发送请求的，浪费资源）
+2. 减小图片尺寸，节约用户流量
+3. img变迁设置alt属性，提升图片加载失败时的用户体验
+4. 原生的`loading: lazy`图片懒加载（图片一定要给宽度和高度，不给的话，也会有性能问题，会导致重排），这是原生支持的图片懒加载，只有当图片进入可视区域内，才会去加载，程序员不可控制，因为监控不到什么时候开始懒加载的，所以我们一般用js去实现懒加载。  
 ```html
 <img loading="lazy" src="xxx" width="100" height="450" />
 ```
-* 不同环境下，加载不同尺寸和像素的图片
+5. 不同环境下，加载不同尺寸和像素的图片
 ```html
 <img src="xxx" sizes="(max-width:500px) 100px, (max-width:600px) 200px" srcset="./images/1.jpg 100w, ./images/2.jgp 200w"/>
 其中100w和200w指代宽度是100px和200px
 宽度是100px的时候，加载1.jpg，宽度是200px的时候，加载2.jpg
 ```
-* 对于较大的图片可以考虑采用渐进式图片（渐进式图片是UI给我们设计的），一张图片一点一点加载，渐进式图片会比正常图片小一点。
-* 采用`base64URL`减少图片请求。有个严重的缺陷是base64后的体积，会比之前大三分之一，因此大图片不会用它，而是小图标可以用它。
-* 采用雪碧图合并图标图片等
+6. 对于较大的图片可以考虑采用渐进式图片（渐进式图片是UI给我们设计的），一张图片一点一点加载，渐进式图片会比正常图片小一点。
+7. 采用`base64URL`减少图片请求。有个严重的缺陷是base64后的体积，会比之前大三分之一，因此大图片不会用它，而是小图标可以用它。
+8. 采用雪碧图合并图标图片等
 ### <font color=#0099ff>2. HTML优化</font>
-* 语义化HTML：代码简洁清晰，利于搜索引擎，便于团队开发
-* 提前声明字符编码，让浏览器快速确定如何渲染网页内容
-* 减少HTML嵌套关系，减少DOM节点数量
-* 删除多余空格、空行、注释、无用的属性等
-* HTML里减少iframe使用，iframe会阻塞onload事件，可以动态加载iframe
-* 表面使用table布局
+1. 语义化HTML：代码简洁清晰，利于搜索引擎，便于团队开发
+2. 提前声明字符编码，让浏览器快速确定如何渲染网页内容
+3. 减少HTML嵌套关系，减少DOM节点数量
+4. 删除多余空格、空行、注释、无用的属性等
+5. HTML里减少iframe使用（iframe会阻塞onload事件，可以动态加载iframe）（父页面会等待子页面加载完，才能出发onload事件）
+6. 避免使用table布局（不好阅读）
 
 ### <font color=#0099ff>3. CSS优化</font>
-
+1. 减少伪类选择器，减少样式层数、减少使用通配符
+2. 避免使用css表达式，css表达式会频繁求值，当页面滚动，或者鼠标移动时都会重新计算（IE6,7）  
+```css
+background-color: expression( (new Date()).getHours()%2 ? "red" : "yellow" );
+```
+3. 删除空行、注释、减少无意义的单位、css进行压缩
+4. 使用外联css，可以对css进行缓存
+5. 添加媒体字段，只加载有效的css文件  
+```html
+<link href="index.css" rel="stylesheet" media="screen and (min-width:1024px)"/>
+```
+6. css `contain` 属性，将元素进行隔离（我当前修改的这个资源和其它资源是没有关系的，节约渲染性能。比如有一个列表里有1000个元素，我往列表的头部添加一个元素，如果不使用contain属性，那么添加的这一个元素会影响列表后面的1000个元素，如过给添加的元素使用contain属性，那么就会将这个一个元素和1000个元素进行隔离，不影响后面的1000个元素）
+7. 减少使用@import，由于@import采用的是串行加载（有a.css、b.css、c.css、d.css四个css文件，a.css里@import了b.css，b.css里@import了c.css，c.css里@import了d.css，那么加载的时候肯定是串行加载的，a去加载b，发现b又加载了c然后再去加载c，又发现c还加载了d，再去加载d，这样操作下来，就是串行加载，很浪费时间和性能，使用Link标签加载css的话，就可以做到并行加载）
 
 ### <font color=#0099ff>4. JS优化</font>
 
+JS会阻塞DOM渲染，也会阻塞HTML解析。
 
-### <font color=#0099ff>5. 图标优化</font>
+1. 通过`async`、`defer`异步加载文件  
+![](./images/script-defer-async.png)  
+可以看到，使用defer比使用async要好，因为defer是异步加载js，等html解析完了，再执行js，不影响html的解析。虽然async也是异步加载js，但是当js加载完了之后会立刻执行js，阻塞html的解析。
+2. 减少DOM操作，缓存访问过的元素
+3. 操作不直接应用到DOM上，而应用到虚拟DOM上。最后一次性应用到DOM上。
+4. 使用`webworker`解决程序阻塞问题。（复杂计算）
+5. `IntersectionObserver`  
+```js
+// 当图片进入了可视区域内
+const observer = new IntersectionObserver(function(changes){
+    changes.forEach(function(element, index){
+        if(element.intersectionRatio > 0){// 图片是否进入了可是区域内
+            observer.unobserve(element.target);// 当进入可视区域，就不再观测了
+            element.target.src = element.target.dataset.src;// 将真实图片的链接赋值给src属性
+        }
+    });
+})
+function initObserver(){
+    const listItems = document.querySelectorAll('img');
+    listItems.forEach(function(item){
+        observer.observe(item);// 采用observer观测每一个图片
+    });
+}
+initObserver();
+
+// IntersectionObserver，该API可以实现懒加载和虚拟滚动，和onScroll类似，现在很多地方都使用了IntersectionObserver来代替onScroll
+```
+6. 虚拟滚动 `virtual-scroll-list`（只显示可视区域内的，可是区域外的要么隐藏，要么删除掉）。
+7. `requestAnimationFrame`、`requestIdleCallback`
+![](./images/Frame生命周期.png)  
+这两个API可以将任务细分到每一帧里去操作。 
+</br>   
+动画一般要采用`requestAnimationFrame`去做。浏览器刷新频率默认为60FPS（Frames Per Second），FPS为每秒传输帧数。1s需要刷新60次，那么每次约1000/60=16.7毫秒，即每一帧大约是16.7s。`requestAnimationFrame`可以实现每一帧都可以做我想做的事情。
+
+8. 尽量避免使用`eval`，消耗时间久。（eval性能不好）
+9. 使用事件委托，减少事件绑定个数。（绑定的事件个数越多，筛查起来就越慢，如果绑定到父级再分发，性能会高很多）
+10. 尽量使用canvas动画、css动画，少用js动画。
+### <font color=#0099ff>5. 字体图标优化</font>
+```css
+@font-face {
+    font-family: "Bmy";
+    src: url("./Hello.ttf");
+    font-display: block;
+    /* block 3s 内不显示，如果没加载完毕用默认的 */
+    /* swap 显示老字体 在替换 */
+    /* fallback 缩短不显示时间，如果没加载完毕用默认的，和block类似 */
+    /* optional 替换可能用字体 可能不替换 */
+}
+body {
+    font-family: "Bmy"
+}
+```
+`FOUT(Flash Of Unstyled Text)`等待一段时间，如果没加载完成，先显示默认，加载后再切换。
+
+`FOIT(Flash Of Invisible)`字体加载完毕后显示，加载超时降级系统字体（白屏）。
 
 ## <font color=#0099ff>九、优化策略</font>
 ---
-### <font color=#0099ff>1. 浏览器的存储</font>
+1. 减少关键资源个数：关键资源个数越多，首次页面加载时间就会越长
+2. 减少关键资源大小：关键资源的大小，内容越小，下载时间越短
+3. 优化白屏：内联css和内联js，移除文件下载，较小文件体积
+4. 预渲染，打包时进行渲染
+5. 使用SSR加速首屏加载（耗费服务端资源），有利于SEO优化。首屏利用服务端渲染，后续交互采用客户端渲染。
+6. 静态化
+## <font color=#0099ff>十. 浏览器的存储</font>
+1. `cookie`：cookie过期时间内一直有效，存储大小4k左右，同时限制字段个数，不是大量数据的存储，每次请求会携带cookie，主要可以利用做身份检查。  
+(1)合理设置cookie有效期。  (2)根据不同子域划分cookie，减少cookie的传输。（3）静态资源域名和cookie域名采用不同域名，避免静态资源访问时携带cookie。
 
-## <font color=#0099ff>十、参考链接</font>
+2. `localStorage`：chrome下最大存储5M，除非手动清除，否则一直存在。利用localStorage存储静态资源（m.baidu.com就是这么做的，把首页大部分的js文件的代码都存储到localStorage里了）。
+```js
+function cacheFile(url) {
+    let fileContent = localStorage.getItem(url);
+    if (fileContent) {
+        eval(fileContent);
+    } else {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onload = function(){
+            let responseText = xhr.responseText;
+            eval(responseText);
+            localStorage.setItem(url, responseText);
+        }
+        xhr.send();
+    }
+}
+cache('/index.js');
+```
+
+3. `sessionStorage`：会话级别存储，可用于页面间的传值。
+
+4. `indexDB`：浏览器的本地数据库（基本无上限）
+```js
+let request = window.indexedDB.open('myDatebase');
+request.onsuccess = function(event){
+    let db = event.target.result;
+    let ts = db.transaction(['student', 'readwrite']);
+    ts.objectStore('student').add({name: 'zf'});
+    let r = ts.objectStore('student').get(5);
+    r.onsuccess = function(e){
+        console.log(e.target.result);
+    }
+}
+request.onupgradeneeded = function(event){
+    let db = event.target.result;
+    if (!db.objectStoreNames.contains('student')) {
+        let store = db.createObjectStore('student', {autoIncrement: true});
+    }
+}
+```
+
+## <font color=#0099ff>十一、增加体验`PWA(Progressive Web App)`</font>
+webapp用户体验较差（不能离线访问），用户粘性底（无法保存入口），pwa就是为了解决这一系列问题，让webapp具有快读、可靠、安全等特点。
+
+* `Web App Manifest`：将网站添加到桌面，更类似native的体验。
+* `Service Worker`：离线缓存内容，配合cache API
+* `Push Api & Notification Api`：消息推送与提醒
+* `App Shell & App Skeleton`：App壳、骨架屏
+
+## <font color=#0099ff>十二、Lighthouse使用</font>
+```
+npm install lighthouse -g
+lighthouse --view http://www.taobao.com
+```
+> 可以根据lighthouse中的建议进行页面的优化
+
+
+## <font color=#0099ff>十三、参考链接</font>
 * [How browsers work](http://taligarsiel.com/Projects/howbrowserswork1.htm)
 * [浏览器的渲染原理简介](https://coolshell.cn/articles/9666.html)
 * [浏览器的渲染：过程与原理](https://zhuanlan.zhihu.com/p/29418126)

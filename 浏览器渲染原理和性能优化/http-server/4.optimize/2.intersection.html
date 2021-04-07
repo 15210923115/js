@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <img src="./images/loading.gif"  data-src="./images/1.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/2.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/3.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/4.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/5.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/6.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/7.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/8.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/9.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+    <img src="./images/loading.gif"  data-src="./images/10.jpeg" alt="xxx" style="display: block;width:600px;height:300px;">
+
+    <script>
+        // 当图片进入了可视区域内
+        const observer = new IntersectionObserver(function(changes){
+            changes.forEach(function(element, index){
+                if(element.intersectionRatio > 0){// 图片是否进入了可是区域内
+                    observer.unobserve(element.target);// 当进入可视区域，就不再观测了
+                    element.target.src = element.target.dataset.src;// 将真实图片的链接赋值给src属性
+                }
+            });
+        })
+        function initObserver(){
+            const listItems = document.querySelectorAll('img');
+            listItems.forEach(function(item){
+                observer.observe(item);// 采用observer观测每一个图片
+            });
+        }
+        initObserver();
+
+        // IntersectionObserver，该API可以实现图片延时加载，和onScroll类似，现在很多地方都使用了IntersectionObserver来代替onScroll
+    </script>
+</body>
+</html>

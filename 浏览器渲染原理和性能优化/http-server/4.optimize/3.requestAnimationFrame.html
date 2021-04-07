@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        #box {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+            background: orange;
+        }
+    </style>
+    <div id="box"></div>
+    <script>
+        // example 1
+        // const element = document.getElementById('box');
+        // function move() {
+        //     element.style.left = element.offsetLeft + 10 + 'px';
+        //     if (element.offsetLeft > 800) {
+        //         clearInterval(timer);
+        //     }
+        // }
+        // var timer = setInterval(move, 10);
+
+        // example 2
+        const element = document.getElementById('box');
+        let start;
+        function step(timestamp) {
+            if (start === undefined) start = timestamp;
+            const elapsed = timestamp - start;
+            // 这里使用`Math.min()`确保元素刚好停在200px的位置。
+            element.style.transform = `translateX(${Math.min( 0.1*elapsed, 800)}px)`;
+            if (elapsed < 6000) {// // 在两秒后停止动画
+                window.requestAnimationFrame(step);
+            }
+        }
+        window.requestAnimationFrame(step);
+
+        // example 3
+        function sleep(d) {
+            for (var t = Date.now(); Date.now() - t <= d;) ;
+        }
+        // sleep函数里的参数可以设置10、100、300、600、1000，然后看看example 2里的动画渲染效果，能明显看出动画卡顿了。
+        // 因为requestIdleCallback的作用是在将在浏览器的空闲时段内调用函数。每次example 2里的动画渲染完后，都会有空闲时间，那么这些空闲时间就可以用来执行requestIdleCallback里的回调函数，本质就是执行sleep函数。
+        // 每一帧里的渲染执行完后，requestIdleCallback发现浏览器有空闲时间，于是在当前这一帧里的剩余时间里，来执行requestIdleCallback里的callback函数（有可能这个callback函数的执行时间超过了当前帧的剩余时间，那么就会占用下一帧的开始时间，等到callback执行完了，下一帧的动画才开始执行。callback里真正执行的是sleep函数，所以sleep要执行多久，则callback就会执行多久，可以尝试修改sleep里的参数为10、100、300、1000试试，看看效果）。这样就能将浏览器的空闲时间充分利用起来了。
+        // react里的切片功能，就是自己实现的一套requestIdleCallback方法，因为requestIdleCallback还只是实验性的API，兼容性不好，所以react自己实现了一套。
+        const duration = 10;// 分别设置10、100、300、600、1000看看效果
+        const tasks = [
+            ()=>{
+                console.log('task1');
+                sleep(duration);
+            },
+            ()=>{
+                console.log('task2');
+                sleep(duration);
+            },
+            ()=>{
+                console.log('task3');
+                sleep(duration);
+            }
+        ];
+        // tasks里有三个任务，执行完总共需要30ms，时间很长，可以将任务拆分到不同的空闲时间内去执行
+        // requestIdleCallback(taskLoop, {timeout: 1000});// timeout的意思是如果这个帧执行的很长，没有空闲时间，那么过了1000ms之后，这个方法也是要被执行的
+        requestIdleCallback(taskLoop);
+        function taskLoop(deadline) {
+            console.log('本帧剩余时间，单位ms', deadline.timeRemaining());
+            while ((deadline.timeRemaining() > 1 || deadline.didTimeout) && tasks.length > 0) {
+                performUnitOfWork();
+            }
+            if (tasks.length > 0) {
+                console.log(`只剩下${deadline.timeRemaining()}ms，时间片到了等待下次空闲时间的调度`);
+                requestIdleCallback(taskLoop);
+            }
+        }
+        function performUnitOfWork() {
+            tasks.shift()();
+        }
+    </script>
+    <!--
+        window.requestAnimationFrame
+
+        window.requestAnimationFrame(callback) 告诉浏览器——你希望执行一个动画，
+        并且要求浏览器在下次重绘之前调用指定的回调函数更新动画。该方法需要传入一个回调
+        函数作为参数，该回调函数会在浏览器下一次重绘之前执行。
+
+        注意：若你想在浏览器下次重绘之前继续更新下一帧动画，那么回调函数自身必须再次调
+        用window.requestAnimationFrame(callback)
+
+        参数：callback
+        下一次重绘之前更新动画帧所调用的函数(即上面所说的回调函数)。该回调
+        函数会被传入DOMHighResTimeStamp参数，该参数与performance.now()的返回值相
+        同，它表示requestAnimationFrame() 开始去执行回调函数的时刻。
+
+        返回值：
+        一个 long 整数，请求 ID ，是回调列表中唯一的标识。是个非零值，没别的意义。
+        你可以传这个值给 window.cancelAnimationFrame() 以取消回调函数。
+
+    -->
+
+    <!--
+        window.requestIdleCallback
+
+        window.requestIdleCallback(callback[, options])方法将在浏览器的空闲时段内
+        调用的函数排队。这使开发者能够在主事件循环上执行后台和低优先级工作，而不会影响延迟
+        关键事件，如动画和输入响应。函数一般会按先进先调用的顺序执行，然而，如果回调函数指
+        定了执行超时时间timeout，则有可能为了在超时前执行函数而打乱执行顺序。
+
+        你可以在空闲回调函数中调用requestIdleCallback()，以便在下一次通过事件循环之前
+        调度另一个回调。
+
+        参数：
+        * callback
+        一个在事件循环空闲时即将被调用的函数的引用。函数会接收到一个名为 IdleDeadline 的
+        参数，这个参数可以获取当前空闲时间以及回调是否在超时时间前已经执行的状态。
+        
+        * options （可选）
+        包括可选的配置参数。具有如下属性：
+        timeout：如果指定了timeout并具有一个正值，并且尚未通过超时毫秒数调用回调，那么回调
+        会在下一次空闲时期被强制执行，尽管这样很可能会对性能造成负面影响。
+
+        返回值：
+        一个ID，可以把它传入 Window.cancelIdleCallback() 方法来结束回调。
+
+
+    -->
+</body>
+</html>
