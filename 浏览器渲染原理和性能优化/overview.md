@@ -117,7 +117,7 @@ Chrome浏览器开发者工具Network窗口下，Timing中显示资源在整个�
 
 
 ### <font color=#0099ff>3. HTTP发展历程</font>
-
+[MDN之HTTP的发展](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/Evolution_of_HTTP)
 #### <font color=orange>（1）HTTP0.9 </font>
 
 在传输过程中没有请求头和响应头。服务器响应没有返回头信息，内容采用ASCII字符流来进行传输。
