@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="time" style="font-size: 24px;color:red;border: 2px solid red;width: 60px;line-height: 30px;text-align: center;">0</div>
+
+    <div id="app" style="font-size: 24px;color:blue;width: 60px;line-height: 30px;text-align: center;">0</div>
+    <div onClick="tap()" style="cursor: pointer;font-size: 34px;">点击</div>
+
+    <div id="app1" style="font-size: 24px;color:blue;width: 60px;line-height: 30px;text-align: center;">0</div>
+    <div onClick="tap1()" style="cursor: pointer;font-size: 34px;">点击1</div>
+
+    <div id="app2" style="font-size: 24px;color:blue;width: 60px;line-height: 30px;text-align: center;">0</div>
+    <div onClick="tap2()" style="cursor: pointer;font-size: 34px;">点击2</div>
+
+</body>
+<script src="./防抖test.js"></script>
+<script>
+    var times = 0;
+    setInterval(()=>{
+        document.querySelector("#time").innerHTML = times++;
+    },1000);
+    
+    var count = 0;
+    var app = document.querySelector("#app");
+
+    var commit = debounce(commitFun, 3000);
+
+    function tap() {
+        commit();
+    }
+
+    function commitFun() {
+        app.innerHTML = ++count;
+    }
+
+    // 1
+
+    var count1 = 0;
+    var app1 = document.querySelector("#app1");
+
+    var commit1 = debounce1(commitFun1, 3000, true);
+
+    function tap1() {
+        commit1();
+    }
+
+    function commitFun1() {
+        app1.innerHTML = ++count1;
+    }
+
+    // 2
+
+    var count2 = 0;
+    var app2 = document.querySelector("#app2");
+
+    var commit2 = debounce1(commitFun2, 3000, false);
+
+    function tap2() {
+        commit2();
+    }
+
+    function commitFun2() {
+        app2.innerHTML = ++count2;
+    }
+</script>
+</html>
