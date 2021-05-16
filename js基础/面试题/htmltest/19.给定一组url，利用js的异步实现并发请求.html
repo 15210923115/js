@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+
+    function printOrder(urls, callback) {
+
+        var result = [];
+        function request(url, index) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('get', url, true);
+            xhr.responseType = 'json';
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status <= 300 || xhr.status === 304) {
+                        result[index] = xhr.response;
+                        if (result.length === urls.length) {
+                            callback(null, result);
+                        }
+                    }
+                }
+            }
+            xhr.send(null);   
+        }
+
+        urls.forEach((url, index) => {
+            request(url, index);
+        });
+        
+    }
+
+    printOrder(["1.json?ts="+new Date(), "2.json?ts="+new Date()], function(err, data){
+        console.log(data);
+    });
+</script>
+</html>
