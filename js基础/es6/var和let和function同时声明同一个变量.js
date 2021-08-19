@@ -45,7 +45,7 @@ console.dir(a);// f a()
 var a = 1;
 
 
-// 通过上面4组的测试，发现let声明的变量，不可以和任何其它var、function、const和let声明的变量重复声明。（const的规则和let，就不写了)
+// 通过上面4组的测试，发现let声明的变量，不可以和任何其它var、function、const和let声明的变量重复声明。（const的规则和let一样，就不写了)
 // 其中1组的情况，为什么var声明的变量结果会覆盖function声明的变量结果？
 // 编译阶段，function会声明并赋值，而var仅声明不赋值，且编译阶段function会优先于var声明，因此发现有function声明了a，就不再管var声明的a了
 // var、let和const声明的变量在编译阶段只声明，不赋值，都是在代码执行阶段赋值的。

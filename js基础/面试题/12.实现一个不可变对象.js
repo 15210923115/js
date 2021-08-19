@@ -21,12 +21,12 @@
  * 
  */
 
-// let obj = { name: 'zf' };
+// let obj = { name: 'yy' };
 // console.log(Object.isExtensible(obj));// true 可扩展
 // Object.preventExtensions(obj);
 // console.log(Object.isExtensible(obj));// false 不可扩展
 // obj.age = 10;
-// console.log(JSON.stringify(obj, null, 2));// {"name": "zf"} 不能新增属性
+// console.log(JSON.stringify(obj, null, 2));// {"name": "yy"} 不能新增属性
 // delete obj.name;
 // console.log(JSON.stringify(obj, null, 2));// {} 可以删除
 

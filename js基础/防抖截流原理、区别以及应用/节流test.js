@@ -12,6 +12,17 @@ function throttle (fn, wait) {
     }
 }
 
+function _throttle(func, wait){
+    let previous = 0;
+    return function(){
+        let now = +new Date();
+        if (now - previous > wait) {
+            func.call(this, arguments);
+            previous = now;
+        }
+    }
+}
+
 // 利用定时器 时间到了才会执行一次
 function throttle1 (fn, wait) {
     let timeout;

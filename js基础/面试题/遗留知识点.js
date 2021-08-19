@@ -1,5 +1,5 @@
 // 一、JSON.stringify的三个参数（出自：12.实现一个不可变对象.js）
-let obj = {name: 'zf'};
+let obj = {name: 'yy'};
 console.log(JSON.stringify(obj, null, 2))
 
 // 二、replace（出自：10.编写parse函数，实现访问对象里属性的值.js）
@@ -66,3 +66,5 @@ console.log(Object.prototype.toString.call(sym));// "[object Symbol]"
 
 
 // 八、Set和Map数据结构
+// Set常常用于数组去重
+// Map可以将引用类型值作为hash结构的key来使用

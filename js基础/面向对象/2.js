@@ -6,7 +6,7 @@
  */
 
 // 字面量创建对象，是一个语法糖，内部调用的是new Object()
-// let obj1 = {name: 'zf'};
+// let obj1 = {name: 'yy'};
 
 // Object是个什么东西？其实也是一个函数，可以创建普通对象。
 // 在浏览器控制台通过console.dir(Object)，可以看到打印出来一个函数，它上面有很多属性。

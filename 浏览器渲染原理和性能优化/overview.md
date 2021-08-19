@@ -183,7 +183,7 @@ HTTP3.0还存在很多问题，目前还没有大范围使用。
 
 CSS不会阻塞HTML解析：构建DOM树的时候，并不会等待css加载和解析。
 
-JS会阻塞HTML的解析：。
+JS会阻塞HTML的解析：
 
 <font color=orange>渲染DOM的时候，分两种情况：</font>
 1. 如果<link></link>标签放在上面（<body></body>之前，一般是<head></head>里），那么渲染DOM的时候，会等待css加载并解析完，将解析完的DOM树和解析的样式CSSOM符合（Attachment）在一起，然后再进行渲染。
@@ -456,7 +456,7 @@ let request = window.indexedDB.open('myDatebase');
 request.onsuccess = function(event){
     let db = event.target.result;
     let ts = db.transaction(['student', 'readwrite']);
-    ts.objectStore('student').add({name: 'zf'});
+    ts.objectStore('student').add({name: 'yy'});
     let r = ts.objectStore('student').get(5);
     r.onsuccess = function(e){
         console.log(e.target.result);

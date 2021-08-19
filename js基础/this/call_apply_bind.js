@@ -9,7 +9,7 @@
 function getName(age, home) {
     console.log(this.name, age, home);
 }
-let obj = {name: 'zhufeng'};
+let obj = {name: 'yangyang'};
 
 // getName.call(obj, '30', '山东');
 // getName.apply(obj, ['30', '山东']);
@@ -61,7 +61,7 @@ let obj = {name: 'zhufeng'};
     prototype._bind = _bind;
 })(Function.prototype);
 
-getName._call(obj, '30', '山东');// zhufeng 30 山东
-getName._apply(obj, ['30', '山东']);// zhufeng 30 山东
+getName._call(obj, '30', '山东');// yangyang 30 山东
+getName._apply(obj, ['30', '山东']);// Yyang 30 山东
 let gn = getName._bind(obj, '30');
-gn('山东');// zhufeng 30 山东
+gn('山东');// Yyang 30 山东

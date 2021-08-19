@@ -14,14 +14,14 @@
 
 // console.log(typeof a);    // undefined
 // console.log(typeof 1);   // number
-// console.log(typeof 'zhufeng'); // string
+// console.log(typeof 'Yyang'); // string
 // console.log(typeof true);  // boolean
 // console.log(typeof Symbol('a'));  // symbol
 
 // console.log(typeof function () { });  //function 函数是一种特殊的对象
 
 // console.log(typeof [1, 2, 3]);  //object
-// console.log(typeof { name: 'zhufeng' });  //object
+// console.log(typeof { name: 'Yyang' });  //object
 // console.log(typeof null);  //object 这是JS设计的一个意外的BUG
 // console.log(typeof new Number(1));  //object
 // console.log(typeof new Date());// object

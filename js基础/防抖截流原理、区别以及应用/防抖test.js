@@ -10,6 +10,16 @@ function debounce(func, wait) {
     }
 }
 
+function _debounce(func, wait) {
+    let timeout;
+    return function(){
+        clearTimeout(timer);
+        timeout = setTimeout(()=>{
+            func.call(this, arguments);
+        });
+    }
+}
+
 function debounce1(func, wait, immediate) {
     let timeout;
     return function () {

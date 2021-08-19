@@ -54,7 +54,7 @@ var Child = (function (_super) {
     return Child;
 })(Father);
 
-let child = new Child('zf', 10);
+let child = new Child('yy', 10);
 console.log(child instanceof Child);
 console.log(child.constructor);
 console.log(child.constructor === Father);

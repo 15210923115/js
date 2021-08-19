@@ -88,7 +88,6 @@ class Promise {
     // 只要x 是一个普通值 就让下一个promise变成成功态
     // 这个x 有可能是一个promise 我们需要采用这个promise的状态
     then(onFulfilled, onRejected) {// 订阅的过程
-        console.log('thenthen---');
         // 穿透（then方法里，可选参数的处理）
         onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : val => val;
         onRejected = typeof onRejected === 'function' ? onRejected : err => {
@@ -97,7 +96,7 @@ class Promise {
         // 递归
         let promise2 = new Promise((resolve, reject) => {// 每一个then都要返回一个新的promise
 
-            if (this.status === FULFILLED) {
+            if (this.status === FULFILLED) {// 这里的this指代外层环境的this，以为这里用的是箭头函数
                 setTimeout(() => {
                     try {
                         let x = onFulfilled(this.value);// 拿到当前then的成功或者失败的执行结果，来判断当前promise2是成功还是失败

@@ -25,8 +25,8 @@ class Child extends Father {
     }
 }
 
-let child_ = new Child('zf', 10);
-child_.getName();// zf 既可以继承父类上定义的实例私有属性，也可以继承父类原型上的方法
+let child_ = new Child('yy', 10);
+child_.getName();// yy 既可以继承父类上定义的实例私有属性，也可以继承父类原型上的方法
 child_.getAge();// 10
 
 Child.staticGetChildName();// ChildName 也可以继承父类上的静态属性和静态方法

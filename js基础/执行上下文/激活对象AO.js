@@ -11,7 +11,7 @@ function one(m) {
 one(1);
 
 // global
-let globalVO = {one: '()=>{}'};
+let globalVO = {one: '()=>{}'};// 其实就是window
 let globalEC = {VO: globalVO, this: window, scopeChain: [globalVO]};
 
 let ECStack = [];
@@ -28,7 +28,7 @@ ECStack.push(oneEC);
 let twoVO = {};
 let twoEC = {VO: twoVO, this: window, scopeChain: [[twoVO, oneVO, globalVO]]};
 ECStack.push(twoEC);
-// 此时VO => AO oneVO.this = window
+// 此时VO => AO twoVO.this = window
 
 ECStack.pop();// twoEC
 ECStack.pop();// oneEC
@@ -40,8 +40,8 @@ ECStack.pop();// globalEC
     全局上下文的变量对象 ：
     
     1. 在浏览器里，全局对象为window
-    2. 全局上下文的变量对象为window,而且这个变量对象不能激活变成活动对象
-    3. 只在窗口打开，全局上下文会一直存在，所有的上下文都可以直接访问全局上下文变量对象上的属性
+    2. 全局上下文的变量对象为window，而且这个变量对象不能激活变成活动对象
+    3. 只要窗口一直打开，全局上下文会一直存在，所有的上下文都可以直接访问全局上下文变量对象上的属性
     4. 只有全局上下文的变量对象允许通过VO的属性名称来间接访问，在函数上下文中是不能直接访问VO对象的
-    5. 未进入执行阶段前，变量对象中的属性都不能访问！但是进入到执行阶段之后，变量对象转变成了活动对象，里面的属性都能被访问了,对于函数上下文来讲，活动对象与变量对象其实都是同一个对象,只是处于执行上下文的不同生命周期
+    5. 未进入执行阶段前，变量对象中的属性都不能访问！但是进入到执行阶段之后，变量对象转变成了活动对象，里面的属性都能被访问了，对于函数上下文来讲，活动对象与变量对象其实都是同一个对象，只是处于执行上下文的不同生命周期
  */

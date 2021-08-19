@@ -75,21 +75,21 @@
  * 该解决办法解决的是防止无限制的递归导致爆栈，并不影响对象的循环引用。
  */
 
-// function clone_obj_arr(source, map = new Map()) {
-//     if (typeof source === 'object') {
-//         if (map.get(source)) {
-//             // 等到复制到Obj属性时，发现有第一次调用函数的时候，记录的map.get(obj)，因此不再递归，直接返回其值，这样就可以防止爆栈了
-//             return map.get(source);
-//         }
-//         let target = Array.isArray(source) ? [] : {};
-//         map.set(source, target);// 第一次调用函数的时候，就会记录上map.set(obj, {})
-//         for (const key in source) {
-//             target[key] = clone_obj_arr(source[key], map);
-//         }
-//         return target;
-//     }
-//     return source;
-// }
+function clone_obj_arr(source, map = new Map()) {
+    if (typeof source === 'object') {
+        if (map.get(source)) {
+            // 等到复制到Obj属性时，发现有第一次调用函数的时候，记录的map.get(obj)，因此不再递归，直接返回其值，这样就可以防止爆栈了
+            return map.get(source);
+        }
+        let target = Array.isArray(source) ? [] : {};
+        map.set(source, target);// 第一次调用函数的时候，就会记录上map.set(obj, {})
+        for (const key in source) {
+            target[key] = clone_obj_arr(source[key], map);
+        }
+        return target;
+    }
+    return source;
+}
 
 // let obj2 = clone_obj_arr(obj);
 // obj.obj = obj;
@@ -145,7 +145,7 @@
 let obj = {
     married: true,
     age: 10,
-    name: 'zhufeng',
+    name: 'Yyang',
     girlfriend: null,
     boyfriend: undefined,
     flag: Symbol('man'),

@@ -32,7 +32,7 @@ var globalExecutionContext = {
     scopeChain: [globalExecutionContextVO]
 };
 // 全局开始执行
-globalExecutionContextVO.VO.a = 2;
+globalExecutionContext.VO.a = 2;
 // 进入one函数执行的时候它的执行上下文的编译阶段
 var oneExecutionContextVO = {
     two: {

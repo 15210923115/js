@@ -17,7 +17,7 @@ function sum(s1, s2) {
 function task(m, n){
     var a = 1;
     var b = {
-        name:'zhufeng'
+        name:'Yyang'
     }
     var c = [1,2,3];
     var d = sum(1,2);

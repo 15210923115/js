@@ -140,8 +140,8 @@ fnEC.lexicalEnvironment[1].d = 7;
 // es6里执行上下文之间的连接靠outer
 // es5里执行上下文之间的连接靠scopeChain
 
-var s = 1;// window.a = global.variableEnvironment.a = 1; var在全局作用域下赋值，相当于给widow上赋值
-let x = 2;// global.lexicalEnvironment.b = 2，该操作并未在window上进行赋值，所以let声明的变量在window上拿不到
+var s = 1;// window.s = global.variableEnvironment.s = 1; var在全局作用域下赋值，相当于给widow上赋值
+let x = 2;// global.lexicalEnvironment.x = 2，该操作并未在window上进行赋值，所以let声明的变量在window上拿不到
 console.log(window.s);// 1
 console.log(window.x);// undefined
 

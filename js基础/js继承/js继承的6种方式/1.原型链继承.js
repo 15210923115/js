@@ -22,6 +22,7 @@ A.prototype.list = [0];
 function B() {}
 
 B.prototype = new A();// 原型链继承的问题在这里：这一步的new A()可能会产生引用类型值，如果把这个引用类型值赋值给了B.prototype，那么所有B类型的对象实例就会共享该引用类型值，从而产生互相干扰的问题，因为修改的都是同一个引用类型值。
+B.prototype.constructor = B;
 
 var b1 = new B();// 原型链继承的另一个问题在这里：创建子类的实例时，无法向父类的构造函数传参，借用构造函数继承的方式，可以解决此问题。
 var b2 = new B();
