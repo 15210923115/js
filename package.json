@@ -1,7 +1,7 @@
 {
   "name": "js",
   "version": "1.0.0",
-  "description": "",
+  "description": "js学习仓库",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +11,16 @@
   "license": "ISC",
   "dependencies": {
     "css": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/15210923115/js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/15210923115/js/issues"
+  },
+  "homepage": "https://github.com/15210923115/js#readme",
+  "devDependencies": {
+    "http-server": "^13.0.1"
   }
 }
