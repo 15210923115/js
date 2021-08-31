@@ -10,7 +10,6 @@
       position: relative;
       width: 100%;
       height: 100px;
-      line-height: 100px;
       text-align: center;
       background-color: transparent;
     }
@@ -20,9 +19,9 @@
       left: 0;
       right: 0;
       bottom: 0;
-      border-bottom: 10px solid blue;
+      border-bottom: 1px solid blue;
       -webkit-transform: scaleY(0.5);
-      -webkit-transform-origin: 0 10px;
+      -webkit-transform-origin: 0 0px;
     }
     .test1::before {
       content: '';
@@ -30,7 +29,7 @@
       left: 0;
       right: 0;
       top: 0;
-      border-top: 10px solid red;
+      border-top: 1px solid red;
       -webkit-transform: scaleY(0.5);
       -webkit-transform-origin: 0 0;
     }
@@ -40,7 +39,7 @@
       top: 0;
       bottom: 0;
       left: 0;
-      border-left: 10px solid green;
+      border-left: 1px solid green;
       -webkit-transform: scaleX(0.5);
       -webkit-transform-origin: 0 0;
     }
@@ -50,48 +49,77 @@
       top: 0;
       bottom: 0;
       right: 0;
-      border-right: 10px solid greenyellow;
+      border-right: 1px solid greenyellow;
       -webkit-transform: scaleX(0.5);
-      -webkit-transform-origin: 10px 0;
+      -webkit-transform-origin: 0 0;
     }
     .normal {
       width: 100%;
       height: 100px;
       line-height: 100px;
       text-align: center;
-      border: 10px solid red;
+      border: 1px solid red;
     }
   </style>
 </head>
 <body>
   <div class="test1">
-    test1
+    上下边框
   </div>
 
   <div>
-    ------
+    ------分隔符
   </div>
 
   <div class="test2">
-    test2
+    左右边框
   </div>
 
   <div>
-    ------
+    ------分隔符
   </div>
 
   <div class="test1">
     <div class="test2">
-      超牛投放页 1px边框测试 实验组
+     css写1px的，但是transform: scaleX(0.5);以及transform: scaleY(0.5);的边框 【实验组】
     </div>
   </div>
 
   <div>
-    ------
+    ------分隔符
   </div>
   
   <div class="normal">
-    超牛投放页 1px边框 对照组
+    正常写css为1px的边框 【对照组】
+  </div>
+
+  <div>
+    <pre>
+      这种方式可以实现移动端下的1px边框:
+      .test1 {
+        position: relative;
+        width: 100%;
+        height: 100px;
+        text-align: center;
+        background-color: transparent;
+      }
+      .test1::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-bottom: 1px solid blue;
+        -webkit-transform: scaleY(0.5);
+        -webkit-transform-origin: 0 0px;
+      }
+
+      优点：圆角无法实现，HACK 代码多，实现四条边框比较闹心
+      缺点：只能单独使用，如果嵌套，scale 的作用也会对包含的元素产生，
+          不想要的影响，所以此种方案配合 :after 和 :before 独立使用较多，
+          比如画一个商品的边框四条线，容器的 after 和 before 可以画两条线，
+          利用容器的父元素的 after、before 再画 2 条线。
+    </pre>
   </div>
 </body>
 </html>

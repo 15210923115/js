@@ -25,7 +25,8 @@
 24. 类型判断 👌🏼
 25. 数据类型 👌🏼
 26. bind、call、apply 👌🏼 
-27. 4. performance API（TTFB、FP、FCP、FMP、FID、卡顿、PV、UV）、监控错误
+27. performance API（TTFB、FP、FCP、FMP、FID、卡顿、PV、UV）、监控错误
+28. 对图片了解多少，如何选用图片
 
 ## 前端优化方向，整理出几个点 preload、prefetch、cdn
 css方向
@@ -244,6 +245,8 @@ cookie和session是都是记录客户状态的机制，不同的是Cookie保存�
 2. 使用mq解决什么问题
 3. 生产者、消费者
 4. 生产者确认、消费者确认
+5. 如何保证高可用
+6. 如何保证消息的可靠性传输啊？要是消息丢失了怎么办啊？
 
 ## 数据库
 1. 索引下推、联合索引、最左前缀原则、聚簇索引、覆盖索引、索引回表
@@ -253,12 +256,16 @@ cookie和session是都是记录客户状态的机制，不同的是Cookie保存�
 5. 为什么加了索引就快了？索引的注意事项
 6. expalin分析
 7. es用过吗？在哪些场景下用到过？为什么要用它？
+8. mysql事务
 
 ## 服务
 1. 服务监控 zabix kibana 接口巡检
 2. token和cookie的区别
 3. 秒杀活动
 4. 应对高并发，可以从哪些方面着手处理
+5. 红包设计
+6. rbac
+7. sso设计、cas
 
 ## 其它
 1. serverless了解么
@@ -280,6 +287,8 @@ cookie和session是都是记录客户状态的机制，不同的是Cookie保存�
 ### CDN怎么引入？
 1. 比如Jquery、moment、lodash等库，可以直接上传到CDN，然后再index.html中使用link标签或者script标签直接用cdn地址直接引入即可。参见webpack配置中的externals配置。（这种情况的库是不会被打包到bundle里的）
 2. webpack打包后的静态文件，通过webpack插件上传到cdn服务器，然后配置outPut.publicPath为cdn服务器的地址，这样打包后的静态文件的src就会自动带上cdn服务器地址的前缀了。
+3. cdn原理了解吗？为什么用了cdn就快了？
+4. cdn回源
 
 ## nodejs面试题
 1. 支持高并发的原因：事件驱动、异步IO、单线程的理解、多进程多线程的理解
@@ -293,6 +302,9 @@ cookie和session是都是记录客户状态的机制，不同的是Cookie保存�
     1. 高性能：创建高性能服务器。  
     2. 高并发：对比Java和Php的实现方式，Web服务器的瓶颈在于并发的用户量。
 7. Buffer的本质、stream的本质、socket的本质
+8. 内存限制
+9. sentinel接口限流
+10. uuid、雪花算法
 
 
 ## 服务监控
@@ -300,8 +312,19 @@ cookie和session是都是记录客户状态的机制，不同的是Cookie保存�
 2. [将Zabbix报警推送到企业微信群](http://repository.grandage.cn:8090/pages/viewpage.action?pageId=1311082)
 3. [zabbix的面试题目总结1](https://blog.csdn.net/zhydream77/article/details/89705822?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522162176647516780255235095%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=162176647516780255235095&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-89705822.first_rank_v2_pc_rank_v29&utm_term=zabbix%E9%9D%A2%E8%AF%95%E9%A2%98&spm=1018.2226.3001.4187)
 4. 异常采集、监控和上报
+5. Sentry
 
 ## redis集群部署、哨兵机制、选举机制
+1. 缓存穿透
+2. 缓存雪崩
+3. 缓存命中
+4. 单线程的redis为什么这么快
+5. redis和数据库读写一致性问题
+6. redis的过期策略以及内存淘汰机制
+7. redis的数据类型
+8. redis实现微信附近的人功能
+9. 分布式锁set 死锁问题
+10. 数据持久化
 
 ## 首页加载优化
 1. ssr
@@ -316,11 +339,19 @@ cookie和session是都是记录客户状态的机制，不同的是Cookie保存�
 ## 还有啥
 1. http、http2、https之间的不同
 2. https安全连接的过程
-3. CA证书申请流程
+3. CA证书申请流程、证书校验过程
 4. http和udp的区别，http2为什么使用udp协议，是如何做到可靠的
 5. tcp滑动窗口、三次握手、四次挥手
 6. 什么是socket，通信原理
-7. 
+7. 对称加密、非对称加密、Diffie-Hellman秘钥交换算法、秘钥协商、完整性验证算法
+8. SSL协议、TLS协议
 
 ## 运维？
 1. CI\CD
+2. lxc、docker、k8s
+3. CI的意思是持续构建。负责拉取代码库中的代码后，执行用户预置定义好的操作脚本，通过一系列编译操作构建出一个 制品 ，并将制品推送至到制品库里面。常用工具有Gitlab CI，Github CI，Jenkins等。这个环节不参与部署，只负责构建代码，然后保存构建物。构建物被称为 制品，保存制品的地方被称为 “制品库”
+4. CD则有2层含义：持续部署（Continuous Deployment）和持续交付（Continuous Delivery）。 持续交付的概念是：将制品库的制品拿出后，部署在测试环境/交付给客户提前测试。持续部署则是将制品部署在生产环境。可以进行持续部署的工具也有很多：Ansible批量部署，Docker直接推拉镜像等等。当然也包括我们后面要写到的Kubernetes集群部署。
+
+## 线上CPU飙升>100%，如何排查
+
+## 如何直接在线上排查问题和debugger
