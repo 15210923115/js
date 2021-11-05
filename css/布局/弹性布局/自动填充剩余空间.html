@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        .box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: stretch;
+        }
+        .left {
+            width: 200px;
+            height: 100%;
+            background: cornflowerblue;
+        }
+        .right {
+            width: 200px;
+            height: 100%;
+            background: cornflowerblue;
+        }
+        .main {
+            flex-grow: 1; /* 自动填充剩余空间 */
+            margin: 0 10px;
+            height: 100%;
+            background: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="child left">1</div>
+        <div class="child main">2</div>
+        <div class="child right">3</div>
+    </div>
+</body>
+</html>

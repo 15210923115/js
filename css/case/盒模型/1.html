@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            border: 1px solid black;
+        }
+        #cankao {
+            width: 400px;
+            height: 400px;
+            margin: 10px;
+            border: 1px solid red;
+            background: pink;
+        }
+        #testIE {
+            width: 400px;
+            height: 400px;
+            padding: 50px;
+            margin: 10px;
+            border: 50px solid red; /* 改变边框宽度，会占用div相应的宽度width */
+            box-sizing: border-box;
+            background: cyan;
+        }
+        #testStandard {
+            width: 400px;
+            height: 400px;
+            padding: 50px;
+            margin: 10px;
+            border: 50px solid red; /* 改变边框宽度，不会占用div相应的宽度width */
+            box-sizing: content-box;
+            background: orange;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="cankao">参考盒子参考盒子参考盒子参考盒子参考盒子参考盒子参考盒子参考盒子参考盒子参考盒子</div>
+    <div id="testIE">IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子IE盒子</div>
+    <div id="testStandard">标准盒子标准盒子标准盒子标准盒子标准盒子标准盒子标准盒子标准盒子标准盒子标准盒子标准盒子</div>
+</body>
+</html>

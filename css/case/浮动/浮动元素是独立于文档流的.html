@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            width: 100px;
+            height: 100px;
+            border: 1px solid blue;
+        }
+        div.fudong {
+            width: 100px;
+            height: 100px;
+            border: 1px solid red;
+            float: left;
+            background: transparent;
+        }
+        div.no1 {
+            width: 200px;
+            height: 200px;
+            background: turquoise;
+            clear: both;
+        }
+        div.lingwai {
+            height: 50px;
+            background: violet;
+        }
+        div.no2 {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+    <div>我没浮动a</div>
+    <div>我没浮动b</div>
+
+    <div class="fudong">浮动1</div>
+    <!-- <div class="lingwai">另外</div> -->
+    <div class="fudong">浮动2</div>
+    <div class="fudong">浮动3</div>
+
+    <div class="no1">我没浮动1，但是我的文字被挤下来了。宽高是200px。clear: both;</div>
+    <div class="fudong">浮动4</div>
+    <div class="no2">我没浮动2。clear: both;</div>
+</body>
+</html>

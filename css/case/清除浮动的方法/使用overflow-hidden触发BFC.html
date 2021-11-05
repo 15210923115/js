@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .clear-box1 {
+            width: 200px;
+            margin-bottom: 10px;
+            background: cyan;
+            overflow: hidden; /* 父级 div 定义 overflow: hidden。 */
+        }
+        .left {
+            float: left;
+            width: 25%;
+            height: 50px;
+            background: orange;
+        }
+
+        .right {
+            float: right;
+            width: 25%;
+            height: 175px;
+            background: pink;
+        }
+        .clear-box2 {
+            width: 200px;
+            height: 100px;
+            background: olive;
+        }
+    </style>
+</head>
+<body>
+    <div class="clear-box1">
+        <div class="left">Left</div>
+        <div class="right">Right</div>
+    </div>
+    <div class="clear-box2">box2</div>
+</body>
+</html>
